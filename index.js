@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDb = require('./database/connection');
 const userRouter = require("./routes/user")
+const dashboardRouter = require("./routes/dashboard")
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -18,4 +19,4 @@ connectDb().then(() => {
 });
 
 app.use("/user", userRouter);
-        
+app.use("/dashboard", dashboardRouter);
