@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
-const User = require("../schema/user.schema");
-
+const {User} = require("../schema/user.schema")
 const authMiddleware = require('../middleware/Auth')
-const isAuth = require('../utils/index')
+const {isAuth} = require('../utils/index')
 const { getUserIdByEmail } = require("../utils/index")
 
 

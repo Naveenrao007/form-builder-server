@@ -15,10 +15,10 @@ const isAuth = ((req) => {
 
 
 async function getUserIdByEmail(email) {
-  console.log("utils", email)
+
   try {
     const user = await User.findOne({ email });
-    console.log("utils data", user._id);
+
 
     if (user) {
       return user._id;
