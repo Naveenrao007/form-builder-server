@@ -1,5 +1,5 @@
 
-const User = require("../schema/user.schema")
+const { User } = require("../schema/user.schema")
 
 const isAuth = ((req) => {
   const token = req.headers.authorization
@@ -15,9 +15,11 @@ const isAuth = ((req) => {
 
 
 async function getUserIdByEmail(email) {
-  console.log(email)
+  console.log("utils", email)
   try {
     const user = await User.findOne({ email });
+    console.log("utils data", user._id);
+
     if (user) {
       return user._id;
     } else {

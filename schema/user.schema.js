@@ -16,6 +16,17 @@ const userSchema = new mongoose.Schema({
         required: true
     },
 })
-
+const directorySchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    type: {
+        type: String,
+        required: true,
+        enum: ['file', 'folder'],
+    },
+    parent: { type: mongoose.Schema.Types.ObjectId, ref: "Directory", default: null },
+    content: { type: String, default: null },
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+});
 const User = mongoose.model('User', userSchema)
-module.exports = User;
+const Directory = mongoose.model('Directory', directorySchema)
+module.exports = { Directory, User };
