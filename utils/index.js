@@ -18,8 +18,6 @@ async function getUserIdByEmail(email) {
 
   try {
     const user = await User.findOne({ email });
-
-
     if (user) {
       return user._id;
     } else {
