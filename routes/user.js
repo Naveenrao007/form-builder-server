@@ -37,7 +37,7 @@ router.post("/login", async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "Wrong email or password" });
+            return res.status(400).json({ message: "User not found" });
         }
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
@@ -53,50 +53,49 @@ router.post("/login", async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
-router.get("/profile", authMiddleware, async (req, res) => {
-    try {
-        const userId = (await getUserIdByEmail(req.user)).toString();
 
-        if (!userId) {
-            return res.status(404).json({ error: "User not found." });
-        }
-        const user = await User.findById(userId);
-
-        res.status(200).json({
-            user: user,
-        });
-    } catch (error) {
-        console.error("Error in /profle route:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
 
 
 router.post("/update", authMiddleware, async (req, res) => {
-    const { name, email, gender, country } = req.body;
-    const userId = (await getUserIdByEmail(req.user)).toString();
+    const { name, email, oldPassword, newPassword } = req.body;
+    const createdByUserId = (await getUserIdByEmail(req.user)).toString();
     try {
-        const user = await User.findById(userId);
+        const user = await User.findById(createdByUserId);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
+        if (name && name !== "") {
+            user.name = name;
+            await user.save();
+            return res.status(201).json({ user, message: "Name updated successfully." });
+        }
 
-        user.name = name || user.name;
-        user.email = email || user.email;
-        user.gender = gender || user.gender;
-        user.country = country || user.country;
-        const updatedUser = await user.save();
-        return res.status(200).json({
-            message: "User profile updated successfully.",
-            user: updatedUser,
-        });
+        if (email && email !== "") {
+            user.email = email;
+            await user.save();
+            return res.status(201).json({ message: "Email updated successfully." });
+        }
+
+        if (oldPassword && newPassword) {
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                return res.status(401).json({ message: "Old password is incorrect." });
+            }
+            if (oldPassword === newPassword) {
+                return res.status(400).json({ message: "New password cannot be the same as the old password." });
+            }
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashedPassword;
+            await user.save();
+            return res.status(201).json({ message: "Password updated successfully." });
+        }
+        return res.status(400).json({ message: "No valid field provided for update." });
     } catch (error) {
         console.error("Error updating user data:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 
 })
-
 module.exports = router;
 
 

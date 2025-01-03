@@ -26,6 +26,12 @@ const directorySchema = new mongoose.Schema({
     parent: { type: mongoose.Schema.Types.ObjectId, ref: "Directory", default: null },
     content: { type: String, default: null },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    sharedWith: [
+        {
+            user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+            permission: { type: String, enum: ['edit', 'view'], required: true },
+        },
+    ],
 });
 const User = mongoose.model('User', userSchema)
 const Directory = mongoose.model('Directory', directorySchema)
