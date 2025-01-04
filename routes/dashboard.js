@@ -343,7 +343,7 @@ router.post("/sharedirectorybyurl", authMiddleware, async (req, res) => {
       for (const subdir of subdirectories) {
         updateSharedWith(subdir.sharedWith, loggedInUserId, permission);
         await subdir.save();
-        await shareSubdirectoriesAndSiblings(subdir._id); 
+        await shareSubdirectoriesAndSiblings(subdir._id);
       }
 
       const siblings = await Directory.find({ parent: directory.parent, owner: linkCreatorUserId });
@@ -387,7 +387,7 @@ router.post("/generatesharelink", authMiddleware, async (req, res) => {
 
     const token = jsonwebtoken.sign({ userId: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    const shareLink = `http://localhost:5173/sharedirectory?token=${token}&permission=${permission}`;
+    const shareLink = `https://form-builder-client-naveen-raw-yadavs-projects.vercel.app/sharedirectory?token=${token}&permission=${permission}`;
 
     res.status(200).json({ shareLink });
   } catch (err) {
